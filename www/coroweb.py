@@ -2,6 +2,7 @@
 import asyncio, os, inspect, logging, functools
 from urllib import parse
 from aiohttp import web
+import apis
 
 
 def get(path):
@@ -137,8 +138,8 @@ class RequestHandler(object):
         try:
             r = await self._func(**kw)
             return r
-        except BaseException as e:
-            return dict(error='', data='',message='')
+        except apis.APIError as e:
+            return dict(error=e.error, data=e.data,message=e.message)
             
         
 
