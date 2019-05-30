@@ -51,16 +51,3 @@ class Comment(Model):
     
         
 
-
-# u = User(
-#     name='daniel',
-#     email='1113135372@qq.com',
-#     passwd='password',
-#     admin=True,
-#     image='http://www.baidu.com',
-# )
-# print(u.name)
-# print(u.getValueOrDefault('created_at'))
-# print(u.id)
-
-# a = u.save()
