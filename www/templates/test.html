@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Test users - Awesome Python Webapp</title>
-</head>
-<body>
+{% extends '__base__.html' %}
+
+{% block title %} 首页 {% endblock title %}
+{% block content %}
     <h1>All users</h1>
     {% for u in users %}
-    <p>{{ u.name }} / {{ u.email }}</p>
+        <p>{{ u.name }} / {{ u.email }}
     {% endfor %}
-</body>
-</html>
+{% endblock content %}

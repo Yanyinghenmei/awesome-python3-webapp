@@ -6,7 +6,16 @@ create database awesome;
 
 use awesome;
 
-grant select, insert, update, delete on awesome.* to 'www-data'@'localhost' identified by 'www-data';
+-- mysql 8.0.0  之后
+-- create user '用户名'@'访问主机' identified by '密码';
+create user 'www-data'@'127.0.0.1' identified by 'www-data';
+grant select, insert, update on awesome.* to 'www-data'@'127.0.0.1';
+
+-- mysql 8.0.0  之前
+-- grant select, insert, update, delete on awesome.* to 'www-data'@'127.0.0.1' identified by 'www-data';
+
+-- 刷新权限
+flush privileges;
 
 create table users (
     `id` varchar(50) not null,
