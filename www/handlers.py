@@ -19,31 +19,20 @@ _COOKIE_KEY = configs.session.secret
 #     }
 
 @get('/')
-async def index(request):
-    summary = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-    blogs = [
-        Blog(id='1',name='Test Blog', summary=summary, create_at=time.time()-120),
-        Blog(id='2',name='Something New', summary=summary, create_at=time.time()-3600),
-        Blog(id='3',name='Learn Swift', summary=summary, create_at=time.time()-7200),
-    ]
+async def index(*, page='1'):
+    page_index = get_page_index(page)
+    num = await Blog.findNumber('count(id)')
+    page = apis.Page(num, page_index)
+    if num == 0:
+        blogs = []
+    else:
+        blogs = await Blog.findAll(orderBy='created_at desc', limit=(page.offset, page.limit))
     return {
         '__template__': 'blogs.html',
+        'page': page,
         'blogs': blogs
     }
 
-@get('/api/users')
-async def api_get_users(page='1',page_size='10',**kw):
-    page_index = get_page_index(page)
-    num = await User.findNumber('count(id)')
-    
-    p = apis.Page(num,page_index,page_size=int(page_size))
-    if num == 0:
-        return dict(page=p,user=())
-    users = await User.findAll(orderBy='created_at desc', limit=(p.offset,p.limit))
-    for u in users:
-        u.passwd='******'
-        # u['passwd'] = '******'
-    return dict(page=p, users=users)
 
 @get('/register')
 async def register():
@@ -65,6 +54,18 @@ def signout(request):
     logging.info('user signed out.')
     return r
 
+@get('/manage/') # manage by Administrator
+def manage():
+	return 'redirect: /manage/blogs'
+
+
+@get('/manage/blogs')
+def manage_blogs(*, page='1'):
+    return {
+        '__template__': 'manage_blogs.html',
+        'page_index': get_page_index(page)
+    }
+
 @get('/manage/blogs/create')
 def manage_create_blog():
     return {
@@ -73,12 +74,18 @@ def manage_create_blog():
         'action': '/api/blogs/create'
     }
 
-@get('manage/blogs')
-def manage_blogs(*, page='1'):
+@get('/manage/blogs/edit')
+def manage_edit_blog(*, id):
     return {
-        '__template__': 'manage_blogs.html',
-        'page_index': get_page_index(page)
+        '__template__': 'manage_blog_edit.html',
+        'id': id,
+        'action': '/api/blogs/create'
     }
+
+
+@get('/author')
+def index_author():
+	return {'__template__': 'author.html'}
 
 
 # ============= API =====================
@@ -151,6 +158,9 @@ async def api_blogs(*, page='1'):
 @get('/api/blogs/{id}')
 async def api_get_blog(*, id):
     blog = await Blog.find(id)
+    # comments = Comment.findall('blog_id?', [id], orderBy='created_at desc')
+    # for c in comments:
+    #     c.html_content=
     return blog
 
 # 创建blog
@@ -166,6 +176,23 @@ async def api_create_blog(request, *, name, summary, content):
     blog = Blog(user_id=request.__user__.id, user_name=request.__user__.name, user_image=request.__user__.image, name=name.strip(), summary=summary.strip(), content=content.strip())
     await blog.save()
     return blog
+
+
+# 用户列表
+@get('/api/users')
+async def api_get_users(page='1',page_size='10',**kw):
+    page_index = get_page_index(page)
+    num = await User.findNumber('count(id)')
+    
+    p = apis.Page(num,page_index,page_size=int(page_size))
+    if num == 0:
+        return dict(page=p,user=())
+    users = await User.findAll(orderBy='created_at desc', limit=(p.offset,p.limit))
+    for u in users:
+        u.passwd='******'
+        # u['passwd'] = '******'
+    return dict(page=p, users=users)
+
 
 
 #  ================= TOOLS ===================
