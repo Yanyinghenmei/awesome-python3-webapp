@@ -9,7 +9,7 @@ use awesome;
 -- mysql 8.0.0  之后
 -- create user '用户名'@'访问主机' identified by '密码';
 create user 'www-data'@'127.0.0.1' identified by 'www-data';
-grant select, insert, update on awesome.* to 'www-data'@'127.0.0.1';
+grant select, insert, update, delete on awesome.* to 'www-data'@'127.0.0.1';
 
 -- mysql 8.0.0  之前
 -- grant select, insert, update, delete on awesome.* to 'www-data'@'127.0.0.1' identified by 'www-data';

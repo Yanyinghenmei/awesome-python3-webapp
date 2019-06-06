@@ -7,7 +7,8 @@
 
 var
     ID = '{{ id }}',
-    action = '{{ action }}';
+    action_create = '{{ action }}';
+    action_update = '/api/blogs/{{ id }}/update'
 function initVM(blog) {
     var vm = new Vue({
         el: '#vm',
@@ -16,6 +17,10 @@ function initVM(blog) {
             submit: function (event) {
                 event.preventDefault();
                 var $form = $('#vm').find('form');
+                var action = action_create;
+                if (ID) {
+                    action = action_update;
+                }
                 $form.postJSON(action, this.$data, function (err, r) {
                     if (err) {
                         $form.showFormError(err);
