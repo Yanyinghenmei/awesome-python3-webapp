@@ -11,14 +11,6 @@ from models import User, Comment, Blog, next_id
 COOKIE_NAME = 'awesession'
 _COOKIE_KEY = configs.session.secret
 
-# @get('/')
-# async def index(request):
-#     users = await User.findAll()
-#     return {
-#         '__template__':'test.html',
-#         'users':users
-#     }
-
 @get('/')
 async def index(*, page='1'):
     page_index = get_page_index(page)
